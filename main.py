@@ -43,7 +43,8 @@ def scrap_offers():
     html = page.read()
     html = html.decode("utf-8")
     soup = BeautifulSoup(html,"html.parser")
-
+    
+    #   Save to txt for testing
     f = open("text.txt",'w',encoding="utf8")
     f.write(str(soup))
     f.close()
