@@ -9,7 +9,7 @@ NAMES_OF_CLASSES = {
     "location_date"         :   "css-veheph",
     "size_price_per_meter"  :   "css-643j0o"
 }                           
-url = "https://www.olx.pl/nieruchomosci/mieszkania/sprzedaz/warszawa/"
+url = "https://www.olx.pl/nieruchomosci/mieszkania/sprzedaz/warszawa/?page=1"
 file_name = "off.csv"
 
 def location_n_date_splitter(text_to_split:str)-> str:
@@ -38,11 +38,38 @@ def save_offers_to_csv(file_name, offers):
         writer.writerow(offer.get())
     csv_file.close()
 
-def scrap_offers():
+def find_next_tag_by_class_name(tag, class_name):
+    current_tag = tag
+    safety_limit = 30
+    while True:
+        safety_limit-=1
+        if current_tag.has_attr('class'):
+            if current_tag.get("class")[0] == class_name:
+                return current_tag
+            else:
+                current_tag = current_tag.find_next()
+        else:
+            current_tag = current_tag.find_next()
+        if safety_limit<= 0:
+            break
+    
+def load_url():
     page = urlopen(url)
     html = page.read()
     html = html.decode("utf-8")
-    soup = BeautifulSoup(html,"html.parser")
+    soup1 = BeautifulSoup(html,"html.parser")
+
+    url[-1] ="2"
+    page = urlopen(url)
+    html = page.read()
+    html = html.decode("utf-8")
+    soup2 = BeautifulSoup(html,"html.parser")
+
+    soup = soup1 + soup2
+    return soup
+   
+def scrap_offers():
+    soup = load_url()
     
     #   Save to txt for testing
     f = open("text.txt",'w',encoding="utf8")
@@ -68,21 +95,7 @@ def scrap_offers():
         offers.append(offer_instance)
     save_offers_to_csv(file_name,offers)
 
-def find_next_tag_by_class_name(tag, class_name):
-    current_tag = tag
-    safety_limit = 30
-    while True:
-        safety_limit-=1
-        if current_tag.has_attr('class'):
-            if current_tag.get("class")[0] == class_name:
-                return current_tag
-            else:
-                current_tag = current_tag.find_next()
-        else:
-            current_tag = current_tag.find_next()
-        if safety_limit<= 0:
-            break
-    
+
 
 if __name__ == "__main__":
     scrap_offers()
