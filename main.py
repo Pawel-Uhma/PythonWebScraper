@@ -7,7 +7,8 @@ NAMES_OF_CLASSES = {
     "title"                 :   "css-16v5mdi",
     "price"                 :   "css-10b0gli",
     "location_date"         :   "css-veheph",
-    "size_price_per_meter"  :   "css-643j0o"
+    "size_price_per_meter"  :   "css-643j0o",
+    "pages"                 :   "css-1mi714g"
 }                           
 file_name = "off.csv"
 
@@ -55,6 +56,15 @@ def find_next_tag_by_class_name(tag, class_name):
         if safety_limit<= 0:
             break
     
+def find_number_of_pages(url):
+    number_of_pages = 0
+    page = urlopen(url)
+    html = page.read()
+    html = html.decode("utf-8")
+    soup = BeautifulSoup(html,"html.parser")
+    page_tags = soup.find_all("a", {"class": NAMES_OF_CLASSES["pages"]})
+    number_of_pages = page_tags[-1].text
+    return int(number_of_pages)
 
 def scrap_single_page(url:str):
     page = urlopen(url)
@@ -94,7 +104,7 @@ def scrap_multiple_pages(number_of_pages:int,starting_url:str):
 
 def main():
     url = "https://www.olx.pl/nieruchomosci/mieszkania/sprzedaz/warszawa/?page=1"
-    pages_to_scrap = 100
+    pages_to_scrap =  find_number_of_pages(url)
     clear_csv()
     scrap_multiple_pages(pages_to_scrap,url)
 
