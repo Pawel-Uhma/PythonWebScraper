@@ -9,7 +9,6 @@ NAMES_OF_CLASSES = {
     "location_date"         :   "css-veheph",
     "size_price_per_meter"  :   "css-643j0o"
 }                           
-url = "https://www.olx.pl/nieruchomosci/mieszkania/sprzedaz/warszawa/?page=1"
 file_name = "off.csv"
 
 def location_n_date_splitter(text_to_split:str)-> str:
@@ -30,9 +29,12 @@ def size_n_price_pm_splitter(text_to_split) ->str:
     price_pm = parts[1]
     return size, price_pm
 
-    
-def save_offers_to_csv(file_name, offers):
+def clear_csv():
     csv_file = open(file_name, 'w',newline = '',encoding="utf8")
+    csv_file.close()
+
+def save_offers_to_csv(file_name, offers):
+    csv_file = open(file_name, 'a',newline = '',encoding="utf8")
     writer = csv.writer(csv_file,delimiter = ',')
     for offer in offers:
         writer.writerow(offer.get())
@@ -53,24 +55,13 @@ def find_next_tag_by_class_name(tag, class_name):
         if safety_limit<= 0:
             break
     
-def load_url():
+
+def scrap_single_page(url:str):
     page = urlopen(url)
     html = page.read()
     html = html.decode("utf-8")
-    soup1 = BeautifulSoup(html,"html.parser")
+    soup = BeautifulSoup(html,"html.parser")
 
-    url[-1] ="2"
-    page = urlopen(url)
-    html = page.read()
-    html = html.decode("utf-8")
-    soup2 = BeautifulSoup(html,"html.parser")
-
-    soup = soup1 + soup2
-    return soup
-   
-def scrap_offers():
-    soup = load_url()
-    
     #   Save to txt for testing
     f = open("text.txt",'w',encoding="utf8")
     f.write(str(soup))
@@ -95,10 +86,20 @@ def scrap_offers():
         offers.append(offer_instance)
     save_offers_to_csv(file_name,offers)
 
+def scrap_multiple_pages(number_of_pages:int,starting_url:str):
+    url = starting_url
+    for current_page_number in range(1,number_of_pages):
+        url = url[:-1]+ str(current_page_number)
+        scrap_single_page(url)
 
+def main():
+    url = "https://www.olx.pl/nieruchomosci/mieszkania/sprzedaz/warszawa/?page=1"
+    pages_to_scrap = 100
+    clear_csv()
+    scrap_multiple_pages(pages_to_scrap,url)
 
 if __name__ == "__main__":
-    scrap_offers()
+    main()
 
 
 
