@@ -3,11 +3,11 @@ class Offer:
     def __init__(self ,title, price ,location , date, size, price_pm):
         self.negotiable = None
         self.title = remove_comma(title)
-        self.price = comma_to_dot(self.convert_price(comma_to_dot(price)))
+        self.price = remove_space(comma_to_dot(self.convert_price(comma_to_dot(price))))
         self.location = remove_comma(location)
         self.date=  comma_to_dot(date)
-        self.size = comma_to_dot(size)
-        self.price_pm = self.convert_price_per_meter(comma_to_dot(price_pm))
+        self.size = convert_size(comma_to_dot(size))
+        self.price_pm = convert_price_per_meter(comma_to_dot(price_pm))
     
     def print(self):
         print(self.title + " - "+ self.price + " - "+self.location+ " - "+self.date + " - "+self.size+" - "+self.price_pm+ " - negotiable: "+ str(self.negotiable) )
@@ -21,12 +21,15 @@ class Offer:
         else:
             self.negotiable = False
         return price
-    def convert_price_per_meter(self,price_pm:str):
-        return price_pm[:-5]
+def convert_price_per_meter(price_pm:str):
+    return price_pm[:-5]
+def convert_size(size:str):
+    return size[:-3]
 
 def comma_to_dot(string:str):
     return string.replace(',','.')
 def remove_comma(string:str):
     return string.replace(',','')
-   
+def remove_space(string:str):
+    return string.replace(' ','')
 
