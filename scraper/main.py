@@ -30,7 +30,6 @@ def location_n_date_splitter(text_to_split:str)-> str:
         date = parts[1] 
     else:
         date = parts[0] +" " +  parts[1] +" " + parts[2] +" "+  parts[3][:4]
-    print(date)
     return location, date
 
 def size_n_price_pm_splitter(text_to_split) ->str:
@@ -102,7 +101,7 @@ def scrap_single_page(url:str):
     soup = BeautifulSoup(html,"html.parser")
 
     #   Save to txt for testing
-    f = open("text.txt",'w',encoding="utf8")
+    f = open("scraper/soup.txt",'w',encoding="utf8")
     f.write(str(soup))
     f.close()
 
@@ -134,7 +133,6 @@ def scrap_multiple_pages(number_of_pages:int,starting_url:str):
     for current_page_number,good_page in enumerate(good_pages):
         url =starting_url+ str(good_page)
         print(str(round(100.00*current_page_number/len(good_pages),2))+"%")
-        # print(" ---------------------- " + str(good_page) + " ----------------------")
         scrap_single_page(url)
 
 def main():
