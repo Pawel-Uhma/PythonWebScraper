@@ -1,5 +1,14 @@
 Jest to projekt, który ma na celu WebScraping popularnej strony internetowej z mieszkaniami na sprzedaż w celu analizy ofert mieszkań.
 
+Scraper zapisuje do pliku csv: 
+- tytuł oferty
+- cenę
+- lokalizacje (dzielnice)
+- datę
+- cenę za metr
+- wielkość
+- czy cena jest do negocjacji
+  
 Analiza 1015 ofert które były dostępne na ten moment:
 
 Rozkład cen:
