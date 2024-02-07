@@ -12,7 +12,7 @@ NAMES_OF_CLASSES = {
     "size_price_per_meter"  :   "css-643j0o",
     "pages"                 :   "css-1mi714g"
 }                           
-file_name = "scraper\off.csv"
+file_name = "scraper\oferty_mieszkań.csv"
 
 def location_n_date_splitter(text_to_split:str)-> str:
     parts = text_to_split.split("-")
@@ -88,7 +88,7 @@ def find_good_pages(url,number_of_pages):
         try:
             page = urlopen(cur_url)
         except:
-            print("Page nr " + str(i) + " is fucked")
+            print("Page nr " + str(i) + " is bad")
         else:
             good_pages.append(i)
     return good_pages
@@ -135,12 +135,50 @@ def scrap_multiple_pages(number_of_pages:int,starting_url:str):
         print(str(round(100.00*current_page_number/len(good_pages),2))+"%")
         scrap_single_page(url)
 
+import pandas as pd
+import numpy as np
+import csv,time
+
+def save_to_timetable():
+    df = pd.read_csv("scraper/oferty_mieszkań.csv")
+
+    shape = df.drop_duplicates().shape
+    rows_no_duplicates = shape[0]
+    print(rows_no_duplicates)
+
+    print("PRICE")
+    price_median = round(np.median(df['price']))
+    print("MEDIAN : " + str(price_median))
+    price_average = round(np.average(df['price']))
+    print("AVERAGE : " + str(price_average))
+
+    print("PRICE_PM")
+    price_pm_median = round(np.median(df['price_pm']))
+    print("MEDIAN : " + str(price_pm_median))
+    price_pm_average = round(np.average(df['price_pm']))
+    print("AVERAGE : " + str(price_pm_average))
+
+    print("SIZE")
+    size_median = round(np.median(df['size']),4)
+    print("MEDIAN : " + str(size_median))
+    size_average = round(np.average(df['size']),4)
+    print("AVERAGE : " + str(size_average))
+
+
+    file_name = "data_science/timetable.csv"
+    cur_time = time.time()
+    csv_file = open(file_name, 'a',newline = '',encoding="utf8")
+    writer = csv.writer(csv_file,delimiter = ',')
+    writer.writerow([cur_time, rows_no_duplicates,price_median, price_average,price_pm_median,price_pm_average,size_median, size_average])
+    csv_file.close()
+
 def main():
     url = "https://www.olx.pl/nieruchomosci/mieszkania/sprzedaz/warszawa/?page="
     clear_csv()
     write_header(file_name)
     pages_to_scrap =  find_number_of_pages(url)
     scrap_multiple_pages(pages_to_scrap,url)
+    save_to_timetable()
 
 if __name__ == "__main__":
     main()
